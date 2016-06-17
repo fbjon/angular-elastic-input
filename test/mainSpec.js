@@ -87,6 +87,19 @@ describe('puElasticInput', function() {
             expect(element[0].clientWidth).toBeGreaterThan(100);
         });
 
+        it('should use size attribute as normal input size', function() {
+            var style = 'padding:0; margin:0; border:none';
+            var reference =
+                compileAndDigest('<input name="field" style="' + style + '" ng-model="s"  size="10">');
+            var referenceWidth = reference[0].clientWidth;
+            console.log(referenceWidth);
+            var element =
+                compileAndDigest('<input ng-model="s" style="' + style + '" pu-elastic-input size="10">');
+            expect(element[0].clientWidth).toBe(referenceWidth);
+            setInputValue(element, 'foobar_foobar_foobar_foobar_foobar_foobar');
+            expect(element[0].clientWidth).toBeGreaterThan(referenceWidth);
+        });
+
         it('cannot be more than maxWidth', function() {
             var style = 'max-width: 100px; padding:0; margin:0; border:none';
             var element =

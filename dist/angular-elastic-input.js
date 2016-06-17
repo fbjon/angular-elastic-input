@@ -11,10 +11,10 @@ angular.module('puElasticInput', []).directive('puElasticInput', [
   function ($document, $window) {
     var wrapper = angular.element('<div style="position:fixed; top:-999px; left:0;"></div>');
     angular.element($document[0].body).append(wrapper);
-    function setMirrorStyle(mirror, element, attrs) {
+    function setMirrorStyle(mirror, element, attrs, minSizeWidth) {
       var style = $window.getComputedStyle(element[0]);
       var defaultMaxWidth = style.maxWidth === 'none' ? element.parent().prop('clientWidth') : style.maxWidth;
-      element.css('minWidth', attrs.puElasticInputMinwidth || style.minWidth);
+      element.css('minWidth', minSizeWidth || attrs.puElasticInputMinwidth || style.minWidth);
       element.css('maxWidth', attrs.puElasticInputMaxwidth || defaultMaxWidth);
       angular.forEach([
         'fontFamily',
@@ -53,8 +53,17 @@ angular.module('puElasticInput', []).directive('puElasticInput', [
       link: function postLink(scope, element, attrs) {
         // Disable trimming inputs by default
         attrs.$set('ngTrim', attrs.ngTrim === 'true' ? 'true' : 'false');
+        var minSizeWidth = 0;
+        if (attrs.puElasticInputMinSize) {
+          var minSize = parseInt(attrs.puElasticInputMinSize);
+          var minSizeElement = angular.element('<input type="text" size="' + minSize + '" tabindex="-1">');
+          minSizeElement.addClass(element[0].className);
+          wrapper.append(minSizeElement);
+          minSizeWidth = minSizeElement.prop('offsetWidth');
+          minSizeElement.remove();
+        }
         var mirror = angular.element('<span style="white-space:pre;"></span>');
-        setMirrorStyle(mirror, element, attrs);
+        setMirrorStyle(mirror, element, attrs, minSizeWidth);
         wrapper.append(mirror);
         function update() {
           mirror.text(element.val() || attrs.placeholder || '');
