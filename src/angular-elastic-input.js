@@ -42,8 +42,6 @@ angular.module('puElasticInput', []).directive('puElasticInput', ['$document', '
         restrict: 'A',
         link: function postLink(scope, element, attrs) {
 
-            // Disable trimming inputs by default
-            attrs.$set('ngTrim', attrs.ngTrim === 'true' ? 'true' : 'false');
 
             var mirror = angular.element('<span style="white-space:pre;"></span>');
             setMirrorStyle(mirror, element, attrs);
@@ -60,6 +58,7 @@ angular.module('puElasticInput', []).directive('puElasticInput', ['$document', '
 
             if (attrs.ngModel) {
                 scope.$watch(attrs.ngModel, update);
+                element.on('keydown keyup focus input propertychange change', update);
             } else {
                 element.on('keydown keyup focus input propertychange change', update);
             }
